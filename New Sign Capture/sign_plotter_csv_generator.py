@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
+from PIL import ImageTk,Image
+import cv2
 
 # Create empty list for coordinate arrays to be appended to
 coords = []
@@ -12,7 +14,14 @@ def save_coords(event):
     coords.append(click_loc)
 
 def next_img():
-    img_label.img = tk.PhotoImage(file=next(imgs))
+    
+    image_name=next(imgs)
+    next_image=int(image_name[:-4])+1
+    print(image_name)
+    print(format(next_image,'05d')+'.jpg')
+    
+    
+    img_label.img = ImageTk.PhotoImage(Image.open(image_name))
     img_label.config(image=img_label.img)
 
 
