@@ -129,6 +129,10 @@ class PageTwo(tk.Frame):
         self.front_image_list=[]
         self.right_image_list=[]
 
+        self.image_name_front=None
+        self.image_name_right=None
+        self.next_image_front=None
+
 
 
         self.front_image_list=self.get_image_list(self.img_path_for_front)
@@ -138,16 +142,14 @@ class PageTwo(tk.Frame):
         self.right_image_iterator = iter(self.right_image_list)
        
         self.farme_for_images=tk.Frame(self,relief='solid', bg='gray30')
-        load = Image.open('check.png')
-        render=ImageTk.PhotoImage(load)
 
-        self.img_label_1 = tk.Label(self.farme_for_images,image=render)
+        self.img_label_1 = tk.Label(self.farme_for_images)
         self.img_label_1.pack(side='left')
 
-        self.img_label_2=tk.Label(self.farme_for_images,image=render)
+        self.img_label_2=tk.Label(self.farme_for_images)
         self.img_label_2.pack(side='left',padx=40)
 
-        self.img_label_3=tk.Label(self.farme_for_images,image=render)
+        self.img_label_3=tk.Label(self.farme_for_images)
         self.img_label_3.pack(side='left')
 
         
@@ -155,6 +157,12 @@ class PageTwo(tk.Frame):
 
         self.btn = tk.Button(self.farme_for_images, text='Next image', command=self.next_img)
         self.btn.pack(side='bottom')
+        
+
+        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command=self.prev_img)
+        self.btn_prev.pack(side='bottom')
+
+
 
 
 
@@ -167,25 +175,35 @@ class PageTwo(tk.Frame):
         print(len(self.right_image_list),self.img_path_for_right)
 
 
+    def prev_img(self):
+        print(type(self.image_name_front))
+        print(self.image_name_right)
+        print(self.next_image_front)
+
+#TODO get previous frame 
+#TODO How to store values into inventory
+#TODO Autoplay
+#TODO values
+
     def next_img(self):
 
-        image_name_front=next(self.front_image_iterator)
-        next_image_front=int(image_name_front[:-4])+1
-        image_name_right=next(self.right_image_iterator)
+        self.image_name_front=next(self.front_image_iterator)
+        self.next_image_front=int(self.image_name_front[:-4])+1
+        self.image_name_right=next(self.right_image_iterator)
 
 
-        next_image_front=format(next_image_front,'06d')+'.jpg'
+        self.next_image_front=format(self.next_image_front,'06d')+'.jpg'
 
-        self.title_text.set("n-front{} n+1 front {} n-right {}".format(image_name_front,next_image_front,image_name_right))
+        self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
 
-        image=Image.open(image_name_front)
+        image=Image.open(self.image_name_front)
         image_resized=image.resize((600,600),Image.ANTIALIAS)
 
 
-        image_2=Image.open(next_image_front)
+        image_2=Image.open(self.next_image_front)
         image_resized_2=image.resize((600,600),Image.ANTIALIAS)
 
-        image_3=Image.open(image_name_right)
+        image_3=Image.open(self.image_name_right)
         image_resized_3=image.resize((600,600),Image.ANTIALIAS)
 
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
