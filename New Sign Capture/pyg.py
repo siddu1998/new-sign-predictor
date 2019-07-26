@@ -108,8 +108,11 @@ class PageTwo(tk.Frame):
         # label=tk.Label(self,text="New Sign Extractor",font=LARGE_FONT)
         # label.pack(pady=10,padx=10)
         self.title_text = StringVar()
-        df = pd.DataFrame(columns=['image_before','image_after','x1','y1','x2','y2'])
+        self.df = pd.DataFrame(columns=['image_before','image_after','x1','y1','x2','y2'])
         
+        
+
+
         print("Please select the image directories") 
         self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',
                                activebackground='gray20')
@@ -126,7 +129,7 @@ class PageTwo(tk.Frame):
         self.front_image_list=[]
         self.right_image_list=[]
 
-        
+
 
         self.front_image_list=self.get_image_list(self.img_path_for_front)
         self.right_image_list=self.get_image_list(self.img_path_for_right)
@@ -142,14 +145,19 @@ class PageTwo(tk.Frame):
         self.img_label_1.pack(side='left')
 
         self.img_label_2=tk.Label(self.farme_for_images,image=render)
-        self.img_label_2.pack(side='left')
+        self.img_label_2.pack(side='left',padx=40)
 
         self.img_label_3=tk.Label(self.farme_for_images,image=render)
         self.img_label_3.pack(side='left')
 
         
+
+
         self.btn = tk.Button(self.farme_for_images, text='Next image', command=self.next_img)
         self.btn.pack(side='bottom')
+
+
+
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
 
 
