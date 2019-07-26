@@ -184,6 +184,7 @@ class PageTwo(tk.Frame):
 #TODO How to store values into inventory
 #TODO Autoplay
 #TODO values
+#Storage and autoplay
 
     def next_img(self):
 
