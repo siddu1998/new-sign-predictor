@@ -18,6 +18,7 @@ Summary: 1. An application to visualize 3D LiDAR data and generate statistical i
 
 import os
 from mpl_toolkits.mplot3d import axes3d
+from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import style
@@ -105,67 +106,37 @@ class PageTwo(tk.Frame):
     def __init__(self,parent,controller):
         
         tk.Frame.__init__(self,parent)
-        # label=tk.Label(self,text="New Sign Extractor",font=LARGE_FONT)
-        # label.pack(pady=10,padx=10)
+
+
         self.title_text = StringVar()
-        self.df = pd.DataFrame(columns=['image_before','image_after','x1','y1','x2','y2'])
-        
-        
-
-
+        self.bug_variable=0
         print("Please select the image directories") 
-        self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',
-                               activebackground='gray20')
+        self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',activebackground='gray20')
         self.title.pack(side='top')
-
-
         self.img_path_for_front = self.get_directories()
         self.img_path_for_right  = self.get_directories()
-    
-
         self.img_index_front_images=0
         self.img_index_right_images=0
-
         self.front_image_list=[]
         self.right_image_list=[]
-
         self.image_name_front=None
         self.image_name_right=None
         self.next_image_front=None
-
-
-
         self.front_image_list=self.get_image_list(self.img_path_for_front)
         self.right_image_list=self.get_image_list(self.img_path_for_right)
 
-        self.front_image_iterator = iter(self.front_image_list)
-        self.right_image_iterator = iter(self.right_image_list)
-       
         self.farme_for_images=tk.Frame(self,relief='solid', bg='gray30')
-
         self.img_label_1 = tk.Label(self.farme_for_images)
         self.img_label_1.pack(side='left')
-
         self.img_label_2=tk.Label(self.farme_for_images)
         self.img_label_2.pack(side='left',padx=40)
-
         self.img_label_3=tk.Label(self.farme_for_images)
         self.img_label_3.pack(side='left')
-
-        
-
-
-        self.btn = tk.Button(self.farme_for_images, text='Next image', command=self.next_img)
-        self.btn.pack(side='bottom')
-        
-
-        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command=self.prev_img)
+        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command= self.prev_img)
         self.btn_prev.pack(side='bottom')
-
-
-
-
-
+        self.btn = tk.Button(self.farme_for_images, text='Next image', command= self.next_img)
+        self.btn.pack(side='bottom')
+        self.data_dict=defaultdict(dict)
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
 
 
@@ -176,10 +147,29 @@ class PageTwo(tk.Frame):
 
 
     def prev_img(self):
-        print(type(self.image_name_front))
-        print(self.image_name_right)
-        print(self.next_image_front)
-
+        self.img_index_front_images=self.img_index_front_images-1
+        self.img_index_right_images=self.img_index_right_images-1    
+        self.image_name_front=self.front_image_list[self.img_index_front_images]
+        self.next_image_front=self.front_image_list[self.img_index_front_images+1]
+        self.image_name_right=self.right_image_list[self.img_index_right_images]
+        self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        image=Image.open(self.image_name_front)
+        image_resized=image.resize((600,600),Image.ANTIALIAS)
+        image_2=Image.open(self.next_image_front)
+        image_resized_2=image.resize((600,600),Image.ANTIALIAS)
+        image_3=Image.open(self.image_name_right)
+        image_resized_3=image.resize((600,600),Image.ANTIALIAS)
+        self.img_label_1.img = ImageTk.PhotoImage(image_resized)
+        self.img_label_1.config(image=self.img_label_1.img)
+        self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
+        self.img_label_2.config(image=self.img_label_2.img)
+        self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
+        self.img_label_3.config(image=self.img_label_3.img)
+        print("----------------PREV----------")
+        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        print("[INFO] Image index front camera from list : " , self.img_index_front_images)
+        print("[INFO] Image index right camera from list : " , self.img_index_right_images)
+        print("-------------------------------")
 #TODO get previous frame 
 #TODO How to store values into inventory
 #TODO Autoplay
@@ -187,36 +177,29 @@ class PageTwo(tk.Frame):
 #Storage and autoplay
 
     def next_img(self):
-
-        self.image_name_front=next(self.front_image_iterator)
-        self.next_image_front=int(self.image_name_front[:-4])+1
-        self.image_name_right=next(self.right_image_iterator)
-
-
-        self.next_image_front=format(self.next_image_front,'06d')+'.jpg'
-
+        print("-----------NEXT---------------")
+        print("[INFO] Image index front camera from list : ", self.img_index_front_images)
+        print("[INFO] Image Index right camera from list :",self.img_index_front_images)
+        self.image_name_front=self.front_image_list[self.img_index_front_images]
+        self.next_image_front=self.front_image_list[self.img_index_front_images+1]
+        self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
-
         image=Image.open(self.image_name_front)
         image_resized=image.resize((600,600),Image.ANTIALIAS)
-
-
         image_2=Image.open(self.next_image_front)
         image_resized_2=image.resize((600,600),Image.ANTIALIAS)
-
         image_3=Image.open(self.image_name_right)
         image_resized_3=image.resize((600,600),Image.ANTIALIAS)
-
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
-
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
         self.img_label_2.config(image=self.img_label_2.img)
-
         self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
         self.img_label_3.config(image=self.img_label_3.img)
-
-
+        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        print("-------------------------------")
+        self.img_index_front_images= self.img_index_front_images+1
+        self.img_index_right_images= self.img_index_right_images+1
     
 
     def get_directories(self):
