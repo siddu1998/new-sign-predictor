@@ -14,7 +14,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg,NavigationToolba
 import tkinter as tk
 from tkinter import ttk 
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image,ImageDraw
 import statistics
 
 
@@ -86,7 +86,8 @@ class PageTwo(tk.Frame):
         
         tk.Frame.__init__(self,parent)
 
-
+        self.width_of_panel=600
+        self.height_of_panel=600
         self.title_text = StringVar()
         self.bug_variable=0
         print("Please select the image directories") 
@@ -117,11 +118,30 @@ class PageTwo(tk.Frame):
         self.btn.pack(side='bottom')
         self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.remove_current_bounding_box)
         self.btn_for_removal_of_bounding_box.pack(side='bottom')
+
+        self.img_label_1.bind("<Button-1>",self.clicked)
+        self.img_label_1.bind("<ButtonRelease-1>",self.release)
+
+        self.img_label_2.bind("<Button-2>",self.clicked_i2)
+        self.img_label_2.bind("<ButtonRelease-2>",self.release_i2)
         
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
         
         #variable storing all data for the output
         self.all_data=[]
+        self.current_instance=[]#[im1,im2,(),(),(),(),c1,c2]
+        #each entry in all data would be like [  [image_name_1,image_name_2,(bbox1_x1,bbox1_y1),(bbox1_x2,bbox1_y2),(bbox2_x1,bbox2_y1),(bbox2_x2,bbox2_y2),centroid_1,centroid_2,predited_gps_x,predicted_gps_y]   ]
+        # self.x11=None
+        # self.y11=None
+        # self.x12=None
+        # self.y12=None
+
+        # self.x21=None
+        # self.y21=None
+        # self.x22=None
+        # self.y22=None
+
+
 
         print(self.img_path_for_front)
         print(self.img_path_for_right)
@@ -137,17 +157,19 @@ class PageTwo(tk.Frame):
         self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         image=Image.open(self.image_name_front)
-        image_resized=image.resize((200,200),Image.ANTIALIAS)
+        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         image_2=Image.open(self.next_image_front)
-        image_resized_2=image.resize((200,200),Image.ANTIALIAS)
+        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         image_3=Image.open(self.image_name_right)
-        image_resized_3=image.resize((200,200),Image.ANTIALIAS)
+        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
         self.img_label_2.config(image=self.img_label_2.img)
         self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
         self.img_label_3.config(image=self.img_label_3.img)
+
+
         print("----------------PREV----------")
         print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
         print("[INFO] Image index front camera from list : " , self.img_index_front_images)
@@ -168,11 +190,11 @@ class PageTwo(tk.Frame):
         self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         image=Image.open(self.image_name_front)
-        image_resized=image.resize((200,200),Image.ANTIALIAS)
+        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         image_2=Image.open(self.next_image_front)
-        image_resized_2=image.resize((200,200),Image.ANTIALIAS)
+        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         image_3=Image.open(self.image_name_right)
-        image_resized_3=image.resize((200,200),Image.ANTIALIAS)
+        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
@@ -186,23 +208,51 @@ class PageTwo(tk.Frame):
 
     #first click on image 1
     def clicked(self,event):
-
+        initial_click=(event.x,event.y)
+        print("-------------CREATING NEW BOUNDING BOX INSTANCE---------------")
+        print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(initial_click[0],initial_click[1]))
+        #appending image_name_from_panel_1
+        print("[INFO] Appending image index {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
+        self.current_instance.append(self.img_index_front_images)
+        self.current_instance.append(self.img_index_right_images+1)
+        print("[INFO] Appending top left corner of the image to the current instance")
+        self.current_instance.append(initial_click)
+        
     #release event on image 2
     def release(self,event):
-    
+        release_point=(event.x,event.y)
+        print("[INFO] Releasing mouse at {} {}".format(release_point[0],release_point[1]))
+        print("[INFO] Appending release point into current instance")
+        self.current_instance.append(release_point)
+
+        print("[INFO] Bounding Boxes drawn on box-1 Now proceed to draw bouding boxes on box two")
+        
     #double_click event for second image
-    def double_clicked(self,event):
+    def clicked_i2(self,event):
+        initial_click_i2=(event.x,event.y)
+        print("[INFO] Top-Left Corner of slected image 2 in resized image {} {}".format(initial_click_i2[0],initial_click_i2[1]))
+        #appending image_name_from_panel_1
+        print("[INFO] Appending top left corner of the image 2 to the current instance")
+        self.current_instance.append(initial_click_i2)
     
     #double_click_release
-    def release_after_double_click(self,event):
-        
-
+    def release_i2(self,event):
+        release_point_i2=(event.x,event.y)
+        print("[INFO] Releasing mouse at 2 {} {}".format(release_point_i2[0],release_point_i2[1]))
+        print("[INFO] Appending release point into current instance")
+        self.current_instance.append(release_point_i2)
+        print("[INFO] Bounding Boxes drawn on box-2")
+        print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
+        self.all_data.append(self.current_instance)
+        self.current_instance=[]
+        print("[INFO] Printing inventory till now {}".format(self.all_data))
+        print("[INFO] All Data captured! Move to next image")
+        print("---------------------------------------------------------------")
 
         
 
     def remove_current_bounding_box(self):
-        self.all_data=self.all_data[:-1]
-        print("[INFO] removing last element {}".format(len(self.all_data)))
+        pass
     
     def get_directories(self):
         return filedialog.askdirectory()
