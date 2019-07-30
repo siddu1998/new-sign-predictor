@@ -129,19 +129,7 @@ class PageTwo(tk.Frame):
         
         #variable storing all data for the output
         self.all_data=[]
-        self.current_instance=[]#[im1,im2,(),(),(),(),c1,c2]
-        #each entry in all data would be like [  [image_name_1,image_name_2,(bbox1_x1,bbox1_y1),(bbox1_x2,bbox1_y2),(bbox2_x1,bbox2_y1),(bbox2_x2,bbox2_y2),centroid_1,centroid_2,predited_gps_x,predicted_gps_y]   ]
-        # self.x11=None
-        # self.y11=None
-        # self.x12=None
-        # self.y12=None
-
-        # self.x21=None
-        # self.y21=None
-        # self.x22=None
-        # self.y22=None
-
-
+        self.current_instance=[]
 
         print(self.img_path_for_front)
         print(self.img_path_for_right)
@@ -206,10 +194,18 @@ class PageTwo(tk.Frame):
         self.img_index_front_images= self.img_index_front_images+1
         self.img_index_right_images= self.img_index_right_images+1
 
+    def sign_id_gen(self,image_index_1,image_index_2):
+        print("[INFO] Generating sign id usig Cantor Pairing function")
+        return int(0.5*(image_index_1+image_index_2)*(image_index_1+image_index_2+1)+image_index_2)
     #first click on image 1
     def clicked(self,event):
         initial_click=(event.x,event.y)
         print("-------------CREATING NEW BOUNDING BOX INSTANCE---------------")
+        print("You Have found a new sign in the images {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
+        print("Creating new sign id for this sign")
+        
+        self.current_instance.append(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+1))
+
         print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(initial_click[0],initial_click[1]))
         #appending image_name_from_panel_1
         print("[INFO] Appending image index {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
