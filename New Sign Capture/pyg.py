@@ -116,14 +116,14 @@ class PageTwo(tk.Frame):
         self.btn_prev.pack(side='bottom')
         self.btn = tk.Button(self.farme_for_images, text='Next image', command= self.next_img)
         self.btn.pack(side='bottom')
-        self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.remove_current_bounding_box)
+        self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.clear_current_instance)
         self.btn_for_removal_of_bounding_box.pack(side='bottom')
 
         self.img_label_1.bind("<Button-1>",self.clicked)
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
 
-        self.img_label_2.bind("<Button-2>",self.clicked_i2)
-        self.img_label_2.bind("<ButtonRelease-2>",self.release_i2)
+        self.img_label_2.bind("<Button-1>",self.clicked_i2)
+        self.img_label_2.bind("<ButtonRelease-1>",self.release_i2)
         
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
         
@@ -197,6 +197,7 @@ class PageTwo(tk.Frame):
     def sign_id_gen(self,image_index_1,image_index_2):
         print("[INFO] Generating sign id usig Cantor Pairing function")
         return int(0.5*(image_index_1+image_index_2)*(image_index_1+image_index_2+1)+image_index_2)
+
     #first click on image 1
     def clicked(self,event):
         initial_click=(event.x,event.y)
@@ -211,6 +212,8 @@ class PageTwo(tk.Frame):
         print("[INFO] Appending image index {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
         self.current_instance.append(self.img_index_front_images)
         self.current_instance.append(self.img_index_right_images+1)
+        self.current_instance.append(self.image_name_front)
+        self.current_instance.append(self.next_image_front)
         print("[INFO] Appending top left corner of the image to the current instance")
         self.current_instance.append(initial_click)
         
@@ -247,8 +250,10 @@ class PageTwo(tk.Frame):
 
         
 
-    def remove_current_bounding_box(self):
-        pass
+    def clear_current_instance(self):
+        print("[INFO] Removing all the bounding boxes in these two images")
+        print(self.current_instance)
+        self.current_instance=[]
     
     def get_directories(self):
         return filedialog.askdirectory()
