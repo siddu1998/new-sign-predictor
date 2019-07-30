@@ -16,9 +16,7 @@ from tkinter import ttk
 from tkinter import *
 from PIL import ImageTk, Image,ImageDraw
 import statistics
-
-
-
+from constants import *
 
 
 #font size
@@ -107,7 +105,7 @@ class PageTwo(tk.Frame):
         self.all_data=[]
         self.current_instance=[]
         #drop down list varibles
-        self.phy_cond_var=StringVar()
+        self.phys_cond_var=StringVar()
         self.retro_cond_var=StringVar()
         self.ovr_type_var=StringVar()
         self.mutcd_code_var=StringVar()
@@ -131,13 +129,60 @@ class PageTwo(tk.Frame):
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
         self.img_label_2.bind("<Button-1>",self.clicked_i2)
         self.img_label_2.bind("<ButtonRelease-1>",self.release_i2)
+        
+    
+        phys_cond_dd = OptionMenu(self.farme_for_images, self.phys_cond_var, *PHYSICAL_CONDITION,
+                                    command=lambda *args: self.set_values('physical_condition'))
+        phys_cond_dd.pack(side='left', padx='5', pady='10')
+
+        mutcd_dd = OptionMenu(self.farme_for_images, self.mutcd_code_var, *MUTCD_CODES,
+                                command=lambda *args: self.set_values('mutcd_code'))
+        mutcd_dd.pack(side='left', padx='5', pady='10')
+
+        ovr_dd = OptionMenu(self.farme_for_images, self.ovr_type_var,
+                            *OVERHEAD_TYPE, command=lambda *args: self.set_values('overhead_type'))
+        ovr_dd.pack(side='left', padx='5', pady='10')
+
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
+        
+
         #image frame ends
 
-        #drop down frame
-        self.frame_dd=tk.Frame(self,relief='solid',bg='gray30')
-        self.frame_dd.pack(side="top",padx="10",pady="10",fill="both",expand=1)
+
+    def set_values(self, type):
+        label = None
+        label_2 = None
+        label_3=None
+        if type == 'physical_condition':
+            label = self.phys_cond_var.get()
+            print("[USER] {} selected".format(label))
+            self.current_instance.append(label)
+
+        # elif type == 'retro_condition':
+            # label = self.retro_cond_var.get()
+        elif type == 'mutcd_code':
+            label_2 = self.mutcd_code_var.get()
+            print("[USER] {} selected".format(label_2))
+            self.current_instance.append(label_2)
+
+        elif type == 'overhead_type':
+            label_3 = self.ovr_type_var.get()
+            print("[USER] {} selected".format(label_3))
+            self.current_instance.append(label_3)
+        print("[INFO] Printing inventory till now {}".format(self.all_data))
+        print("[INFO] All Data captured! Move to next image")
+        print("---------------------------------------------------------------")
+
         
+        
+
+
+
+    def initialize_dd(self):        
+        self.retro_cond_var.set("None")
+        self.phys_cond_var.set("None")
+        self.mutcd_code_var.set("None")
+        self.ovr_type_var.set("None")
 
         
 
@@ -206,6 +251,8 @@ class PageTwo(tk.Frame):
         print("-------------------------------")
         self.img_index_front_images= self.img_index_front_images+1
         self.img_index_right_images= self.img_index_right_images+1
+        self.current_instance=[]
+        self.initialize_dd()
 
     def sign_id_gen(self,image_index_1,image_index_2):
         print("[INFO] Generating sign id usig Cantor Pairing function")
@@ -261,10 +308,7 @@ class PageTwo(tk.Frame):
         print("[INFO] Bounding Boxes drawn on box-2")
         print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
         self.all_data.append(self.current_instance)
-        self.current_instance=[]
-        print("[INFO] Printing inventory till now {}".format(self.all_data))
-        print("[INFO] All Data captured! Move to next image")
-        print("---------------------------------------------------------------")
+
 
         
 
