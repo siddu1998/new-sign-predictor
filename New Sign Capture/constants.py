@@ -1,0 +1,14 @@
+ROI = [2,3,4,5,6,7,8,9]
+RED = (255,0,0)
+SIGN_LABELS = [1,2,3,4]
+RETRO_CONDITION = ("Good",'Marginal','Poor')
+PHYSICAL_CONDITION = ("Good",'Dirty','Surface Failure','Post Failure','Obstruction')
+OVERHEAD_TYPE = ('Ground','Bridge Mounted','Sign Bridge','Butterfly')
+MUTCD_CODES = (1, 2)
+CHANGE_RETRO = 1
+CHANGE_PHYS = 2
+CHANGE_MUTCD = 3
+CHANGE_OVR_TYPE = 4
+FRAME_MODE = 'frame'
+INVENTORY_MODE = 'inventory'
+SIGN_LIDAR_MODE = "signs"

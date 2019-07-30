@@ -104,7 +104,16 @@ class PageTwo(tk.Frame):
         self.next_image_front=None
         self.front_image_list=self.get_image_list(self.img_path_for_front)
         self.right_image_list=self.get_image_list(self.img_path_for_right)
+        self.all_data=[]
+        self.current_instance=[]
+        #drop down list varibles
+        self.phy_cond_var=StringVar()
+        self.retro_cond_var=StringVar()
+        self.ovr_type_var=StringVar()
+        self.mutcd_code_var=StringVar()
 
+
+        #images frame
         self.farme_for_images=tk.Frame(self,relief='solid', bg='gray30')
         self.img_label_1 = tk.Label(self.farme_for_images)
         self.img_label_1.pack(side='left')
@@ -112,24 +121,25 @@ class PageTwo(tk.Frame):
         self.img_label_2.pack(side='left',padx=40)
         self.img_label_3=tk.Label(self.farme_for_images)
         self.img_label_3.pack(side='left')
-        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command= self.prev_img)
+        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command=  self.prev_img)
         self.btn_prev.pack(side='bottom')
-        self.btn = tk.Button(self.farme_for_images, text='Next image', command= self.next_img)
+        self.btn = tk.Button(self.farme_for_images, text='Next image', command=self.next_img)
         self.btn.pack(side='bottom')
         self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.clear_current_instance)
         self.btn_for_removal_of_bounding_box.pack(side='bottom')
-
         self.img_label_1.bind("<Button-1>",self.clicked)
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
-
         self.img_label_2.bind("<Button-1>",self.clicked_i2)
         self.img_label_2.bind("<ButtonRelease-1>",self.release_i2)
-        
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
+        #image frame ends
+
+        #drop down frame
+        self.frame_dd=tk.Frame(self,relief='solid',bg='gray30')
+        self.frame_dd.pack(side="top",padx="10",pady="10",fill="both",expand=1)
         
-        #variable storing all data for the output
-        self.all_data=[]
-        self.current_instance=[]
+
+        
 
         print(self.img_path_for_front)
         print(self.img_path_for_right)
@@ -138,12 +148,15 @@ class PageTwo(tk.Frame):
 
 
     def prev_img(self):
+
         self.img_index_front_images=self.img_index_front_images-1
         self.img_index_right_images=self.img_index_right_images-1    
         self.image_name_front=self.front_image_list[self.img_index_front_images]
         self.next_image_front=self.front_image_list[self.img_index_front_images+1]
         self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        
+        print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
         image=Image.open(self.image_name_front)
         image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         image_2=Image.open(self.next_image_front)
@@ -236,9 +249,14 @@ class PageTwo(tk.Frame):
     
     #double_click_release
     def release_i2(self,event):
+       
+
         release_point_i2=(event.x,event.y)
         print("[INFO] Releasing mouse at 2 {} {}".format(release_point_i2[0],release_point_i2[1]))
         print("[INFO] Appending release point into current instance")
+        
+
+
         self.current_instance.append(release_point_i2)
         print("[INFO] Bounding Boxes drawn on box-2")
         print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
@@ -252,8 +270,15 @@ class PageTwo(tk.Frame):
 
     def clear_current_instance(self):
         print("[INFO] Removing all the bounding boxes in these two images")
-        print(self.current_instance)
-        self.current_instance=[]
+        print(self.all_data)
+        print(self.img_index_front_images,self.img_index_front_images+1)
+        sign_id_to_clear=self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+1)
+        print("[INFO] Clearning bounding boxes and data corresponding to sign_id {}".format(sign_id_to_clear))
+        for i in range (0,len(self.all_data)):
+             if self.all_data[i][0]==sign_id_to_clear:
+                 del self.all_data[i] 
+        print(self.all_data)
+       
     
     def get_directories(self):
         return filedialog.askdirectory()
