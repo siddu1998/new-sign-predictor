@@ -120,7 +120,7 @@ class PageTwo(tk.Frame):
         
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
         
-        
+        #variable storing all data for the output
         self.all_data=[]
 
         print(self.img_path_for_front)
@@ -186,10 +186,13 @@ class PageTwo(tk.Frame):
 
     #first click on image 1
     def clicked(self,event):
+
     #release event on image 2
     def release(self,event):
+    
     #double_click event for second image
     def double_clicked(self,event):
+    
     #double_click_release
     def release_after_double_click(self,event):
         
