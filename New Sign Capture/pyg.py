@@ -1,21 +1,3 @@
-"""
-################################################
-Author : Sai Siddartha Maram    (msaisiddartha1@gmail.com)
-Data   : July 2019
-Summary: 1. An application to visualize 3D LiDAR data and generate statistical insights about it and recommend the 
-         apt replacement strategy
-         2. Provide smooth Selection mechanism using concept of Lasso selection
-         3. Generate and compare statistical trends upon regions of intrests
-         4. Dicscusses Retro intensity spatially
-         5. Study on retro intensity and its dependence with color
-         6. Study of retro intensity as a property of age
-###############################################
-"""
-
-
-
-#imports
-
 import os
 from mpl_toolkits.mplot3d import axes3d
 from collections import defaultdict
@@ -93,9 +75,6 @@ class PageOne(tk.Frame):
         button1.pack()
 
 
-#a function to store all the points
-def store_work(df,value_title):
-    pass
 
 
 
@@ -136,9 +115,13 @@ class PageTwo(tk.Frame):
         self.btn_prev.pack(side='bottom')
         self.btn = tk.Button(self.farme_for_images, text='Next image', command= self.next_img)
         self.btn.pack(side='bottom')
-        self.data_dict=defaultdict(dict)
+        self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.remove_current_bounding_box)
+        self.btn_for_removal_of_bounding_box.pack(side='bottom')
+        
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
-
+        
+        
+        self.all_data=[]
 
         print(self.img_path_for_front)
         print(self.img_path_for_right)
@@ -154,11 +137,11 @@ class PageTwo(tk.Frame):
         self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         image=Image.open(self.image_name_front)
-        image_resized=image.resize((600,600),Image.ANTIALIAS)
+        image_resized=image.resize((200,200),Image.ANTIALIAS)
         image_2=Image.open(self.next_image_front)
-        image_resized_2=image.resize((600,600),Image.ANTIALIAS)
+        image_resized_2=image.resize((200,200),Image.ANTIALIAS)
         image_3=Image.open(self.image_name_right)
-        image_resized_3=image.resize((600,600),Image.ANTIALIAS)
+        image_resized_3=image.resize((200,200),Image.ANTIALIAS)
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
@@ -185,11 +168,11 @@ class PageTwo(tk.Frame):
         self.image_name_right=self.right_image_list[self.img_index_right_images]
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         image=Image.open(self.image_name_front)
-        image_resized=image.resize((600,600),Image.ANTIALIAS)
+        image_resized=image.resize((200,200),Image.ANTIALIAS)
         image_2=Image.open(self.next_image_front)
-        image_resized_2=image.resize((600,600),Image.ANTIALIAS)
+        image_resized_2=image.resize((200,200),Image.ANTIALIAS)
         image_3=Image.open(self.image_name_right)
-        image_resized_3=image.resize((600,600),Image.ANTIALIAS)
+        image_resized_3=image.resize((200,200),Image.ANTIALIAS)
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
@@ -200,8 +183,24 @@ class PageTwo(tk.Frame):
         print("-------------------------------")
         self.img_index_front_images= self.img_index_front_images+1
         self.img_index_right_images= self.img_index_right_images+1
-    
 
+    #first click on image 1
+    def clicked(self,event):
+    #release event on image 2
+    def release(self,event):
+    #double_click event for second image
+    def double_clicked(self,event):
+    #double_click_release
+    def release_after_double_click(self,event):
+        
+
+
+        
+
+    def remove_current_bounding_box(self):
+        self.all_data=self.all_data[:-1]
+        print("[INFO] removing last element {}".format(len(self.all_data)))
+    
     def get_directories(self):
         return filedialog.askdirectory()
     
@@ -229,3 +228,4 @@ class PageTwo(tk.Frame):
                 
 app=SignAnalyzer()
 app.mainloop()
+
