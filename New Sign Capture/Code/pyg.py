@@ -17,6 +17,7 @@ from tkinter import *
 from PIL import ImageTk, Image,ImageDraw
 import statistics
 from constants import *
+import time
 
 
 #font size
@@ -45,7 +46,6 @@ class SignAnalyzer(tk.Tk):
     def show_frame(self,cont):
         frame=self.frames[cont]
         frame.tkraise()
-
 
 
 #Front page
@@ -83,6 +83,9 @@ class PageTwo(tk.Frame):
     def __init__(self,parent,controller):
         
         tk.Frame.__init__(self,parent)
+ 
+
+ 
 
         self.width_of_panel=600
         self.height_of_panel=600
@@ -93,7 +96,9 @@ class PageTwo(tk.Frame):
         self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',activebackground='gray20')
         self.title.pack(side='top')
         self.img_path_for_front = self.get_directories()
+        print(self.img_path_for_front)
         self.img_path_for_right  = self.get_directories()
+        print(self.img_path_for_right)
         self.img_index_front_images=0
         self.img_index_right_images=0
         self.front_image_list=[]
@@ -110,27 +115,48 @@ class PageTwo(tk.Frame):
         self.retro_cond_var=StringVar()
         self.ovr_type_var=StringVar()
         self.mutcd_code_var=StringVar()
-
+        self.previous_index=0
+        
+        self.play_button_var=0
 
         #images frame
         self.farme_for_images=tk.Frame(self,relief='solid', bg='gray30')
+
         self.img_label_1 = tk.Label(self.farme_for_images)
         self.img_label_1.pack(side='left')
+        
         self.img_label_2=tk.Label(self.farme_for_images)
         self.img_label_2.pack(side='left',padx=40)
+        
         self.img_label_3=tk.Label(self.farme_for_images)
         self.img_label_3.pack(side='left')
-        self.btn_prev = tk.Button(self.farme_for_images, text='Previous image', command=  self.prev_img)
-        self.btn_prev.pack(side='bottom')
-        self.btn = tk.Button(self.farme_for_images, text='Next image', command=self.next_img)
-        self.btn.pack(side='bottom')
+        
+        
         self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.clear_current_instance)
-        self.btn_for_removal_of_bounding_box.pack(side='bottom')
+        self.btn_for_removal_of_bounding_box.pack(side='left', padx='5', pady='10')
+        
         self.img_label_1.bind("<Button-1>",self.clicked)
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
         self.img_label_2.bind("<Button-1>",self.clicked_i2)
         self.img_label_2.bind("<ButtonRelease-1>",self.release_i2)
+                
+        # image=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
+        # image_2=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        # image_3=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        # self.img_label_1.img = ImageTk.PhotoImage(image_resized)
+        # self.img_label_1.config(image=self.img_label_1.img)
+        
+        # self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
+        # self.img_label_2.config(image=self.img_label_2.img)
+        
+        # self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
+        # self.img_label_3.config(image=self.img_label_3.img)
     
         phys_cond_dd = OptionMenu(self.farme_for_images, self.phys_cond_var, *PHYSICAL_CONDITION,
                                     command=lambda *args: self.set_values('physical_condition'))
@@ -147,7 +173,36 @@ class PageTwo(tk.Frame):
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
         
 
+        self.farme_for_np=tk.Frame(self,relief='solid', bg='gray90')
+
+        self.btn = tk.Button(self.farme_for_np, text='Next image',command=self.next_img)
+        self.btn.pack(side='left', padx='5', pady='10')
+
+    
+
+
+        self.btn_play = tk.Button(self.farme_for_np, text='Play',command=self.play_button)
+        self.btn_play.pack(side='left', padx='5', pady='10')
+        # self.btn_stop = tk.Button(self.farme_for_np, text='Stop',command=self.stop_button)
+        # self.btn_stop.pack(side='left', padx='5', pady='10')
+        self.btn_prev = tk.Button(self.farme_for_np, text='Previous image', command=  self.prev_img)
+        self.btn_prev.pack(side='left', padx='5', pady='10')
+        
+        
+    
+        self.farme_for_np.pack(side="bottom",anchor='w', padx="10", pady="10", fill='both', expand=1)
+
         #image frame ends
+    def play_button(self):
+        
+        if self.play_button_var==1:
+            self.play_button_var=0
+            print("updating play button stauts {}".format(self.play_button_var))
+
+
+        elif self.play_button_var==0:
+            self.play_button_var=1
+            print("updating play button stauts {}".format(self.play_button_var))
 
 
     def set_values(self, type):
@@ -176,84 +231,132 @@ class PageTwo(tk.Frame):
 
         
         
-
-
-
+  
     def initialize_dd(self):        
         self.retro_cond_var.set("None")
         self.phys_cond_var.set("None")
         self.mutcd_code_var.set("None")
         self.ovr_type_var.set("None")
+    
+    # def stop_button(self):
+    #     print("[TRYING TO STOP]")
+    #     self.play_button_var=0
 
+
+    # def check_play_var(self):
+    #     print("checing")
+    #     if self.play_button_var==1:
+    #         print('checked and true')
+    #         return True
+    #     else:
+    #         return False
+
+    # def play_button(self):
+    #     self.play_button_var=1
+    #     while self.check_play_var():
+    #         self.next_img()
+    #     print("[Stopped]")
+
+
+    def next_img(self):
+        print("-----------NEXT---------------")
+        print("[USER] YOU CLICKED NEXT")
+        print("[INFO] Moving to : ", self.img_index_front_images)
+        #print("[INFO] Starting to play the images automatically!")
+        
+        self.image_name_front=self.front_image_list[self.img_index_front_images]
+        self.next_image_front=self.front_image_list[self.img_index_front_images+self.frame_rate]
+        self.image_name_right=self.right_image_list[self.img_index_right_images]
+
+        self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        
+        image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
+        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
+        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
+        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        self.img_label_1.img = ImageTk.PhotoImage(image_resized)
+        self.img_label_1.config(image=self.img_label_1.img)
+        
+        self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
+        self.img_label_2.config(image=self.img_label_2.img)
+        
+        self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
+        self.img_label_3.config(image=self.img_label_3.img)
+
+        # print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
+        # print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate))        
+        # print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        # print("-------------------------------")
+
+        self.current_instance=[]
+        self.initialize_dd()
+        self.previous_index=self.img_index_front_images
+        self.img_index_front_images=1+self.img_index_front_images
+        self.img_index_right_images=1+self.img_index_right_images
+        print("[Play button status] {}".format(self.play_button_var))
+        if self.play_button_var==1:
+            self.after(400,self.next_img)
         
 
-        print(self.img_path_for_front)
-        print(self.img_path_for_right)
-        print(len(self.front_image_list),self.img_path_for_front)
-        print(len(self.right_image_list),self.img_path_for_right)
-
+# shishodia.aman@gmail.com
+# +1 4703094627
 
     def prev_img(self):
 
-        self.img_index_front_images=self.img_index_front_images-1
-        self.img_index_right_images=self.img_index_right_images-1    
-        self.image_name_front=self.front_image_list[self.img_index_front_images]
-        self.next_image_front=self.front_image_list[self.img_index_front_images+1]
-        self.image_name_right=self.right_image_list[self.img_index_right_images]
+
+        print("----------------PREV----------")
+        print("[USER] YOU CLICKED PREVIOUS")
+
+
+        self.previous_index=self.previous_index-1
+        self.img_index_front_images=self.previous_index
+        self.img_index_right_images=self.previous_index
+        print("[INFO] Moving to:",self.previous_index)
+
+
+        
+        self.image_name_front=self.front_image_list[self.previous_index]
+        self.next_image_front=self.front_image_list[self.previous_index+self.frame_rate]
+        self.image_name_right=self.right_image_list[self.previous_index]
+
+        
+
+        
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         
-        print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
-        image=Image.open(self.image_name_front)
+        # print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
+        # print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate))  
+        # print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+
+        image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
         image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        image_2=Image.open(self.next_image_front)
+        image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
         image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        image_3=Image.open(self.image_name_right)
+        image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
         image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+
         self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
         self.img_label_2.config(image=self.img_label_2.img)
         self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
         self.img_label_3.config(image=self.img_label_3.img)
+        self.img_index_front_images=self.previous_index+1
+        self.img_index_right_images=self.previous_index+1
 
 
-        print("----------------PREV----------")
-        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
-        print("[INFO] Image index front camera from list : " , self.img_index_front_images)
-        print("[INFO] Image index right camera from list : " , self.img_index_right_images)
-        print("-------------------------------")
+
 #TODO get previous frame 
 #TODO How to store values into inventory
 #TODO Autoplay
 #TODO values
 #Storage and autoplay
 
-    def next_img(self):
-        print("-----------NEXT---------------")
-        print("[INFO] Image index front camera from list : ", self.img_index_front_images)
-        print("[INFO] Image Index right camera from list :",self.img_index_front_images)
-        self.image_name_front=self.front_image_list[self.img_index_front_images]
-        self.next_image_front=self.front_image_list[self.img_index_front_images+1]
-        self.image_name_right=self.right_image_list[self.img_index_right_images]
-        self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
-        image=Image.open(self.image_name_front)
-        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        image_2=Image.open(self.next_image_front)
-        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        image_3=Image.open(self.image_name_right)
-        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        self.img_label_1.img = ImageTk.PhotoImage(image_resized)
-        self.img_label_1.config(image=self.img_label_1.img)
-        self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
-        self.img_label_2.config(image=self.img_label_2.img)
-        self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
-        self.img_label_3.config(image=self.img_label_3.img)
-        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
-        print("-------------------------------")
-        self.img_index_front_images= self.img_index_front_images+1
-        self.img_index_right_images= self.img_index_right_images+1
-        self.current_instance=[]
-        self.initialize_dd()
 
     def sign_id_gen(self,image_index_1,image_index_2):
         print("[INFO] Generating sign id usig Cantor Pairing function")
@@ -263,16 +366,16 @@ class PageTwo(tk.Frame):
     def clicked(self,event):
         initial_click=(event.x,event.y)
         print("-------------CREATING NEW BOUNDING BOX INSTANCE---------------")
-        print("You Have found a new sign in the images {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
+        print("You Have found a new sign in the images indicies {} {}".format(self.previous_index,self.previous_index+1))
         print("Creating new sign id for this sign")
         
-        self.current_instance.append(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+1))
+        self.current_instance.append(self.sign_id_gen(self.previous_index,self.previous_index+1))
 
         print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(initial_click[0],initial_click[1]))
         #appending image_name_from_panel_1
-        print("[INFO] Appending image index {} {}".format(self.img_index_front_images,self.img_index_front_images+1))
-        self.current_instance.append(self.img_index_front_images)
-        self.current_instance.append(self.img_index_right_images+1)
+        print("[INFO] Appending image index {} {}".format(self.previous_index,self.previous_index+1))
+        self.current_instance.append(self.previous_index)
+        self.current_instance.append(self.previous_index+1)
         self.current_instance.append(self.image_name_front)
         self.current_instance.append(self.next_image_front)
         print("[INFO] Appending top left corner of the image to the current instance")
@@ -316,8 +419,8 @@ class PageTwo(tk.Frame):
     def clear_current_instance(self):
         print("[INFO] Removing all the bounding boxes in these two images")
         print(self.all_data)
-        print(self.img_index_front_images,self.img_index_front_images+1)
-        sign_id_to_clear=self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+1)
+        print(self.img_index_front_images-1,self.img_index_front_images)
+        sign_id_to_clear=self.sign_id_gen(self.img_index_front_images-1,self.img_index_front_images)
         print("[INFO] Clearning bounding boxes and data corresponding to sign_id {}".format(sign_id_to_clear))
         for i in range (0,len(self.all_data)):
              if self.all_data[i][0]==sign_id_to_clear:
