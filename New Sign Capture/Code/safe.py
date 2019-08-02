@@ -139,19 +139,25 @@ class PageTwo(tk.Frame):
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
         self.img_label_2.bind("<Button-1>",self.clicked_i2)
         self.img_label_2.bind("<ButtonRelease-1>",self.release_i2)
-
-        self.image=None
-        self.image_2=None
-        self.image_3=None
-        self.image_resized=None
-        self.image_resized_2=None
-        self.image_resized_3=None
-
-        self.inital_click=(0,0)
-        self.release_point=(0,0)
-        self.initial_click_i2=(0,0)
-        self.release_point_i2=(0,0)
                 
+        # image=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        # image_2=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        # image_3=Image.open(self.img_path_for_front+'/'+'000000.jpg')
+        # image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        # self.img_label_1.img = ImageTk.PhotoImage(image_resized)
+        # self.img_label_1.config(image=self.img_label_1.img)
+        
+        # self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
+        # self.img_label_2.config(image=self.img_label_2.img)
+        
+        # self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
+        # self.img_label_3.config(image=self.img_label_3.img)
+    
         phys_cond_dd = OptionMenu(self.farme_for_images, self.phys_cond_var, *PHYSICAL_CONDITION,
                                     command=lambda *args: self.set_values('physical_condition'))
         phys_cond_dd.pack(side='left', padx='5', pady='10')
@@ -232,13 +238,27 @@ class PageTwo(tk.Frame):
         self.mutcd_code_var.set("None")
         self.ovr_type_var.set("None")
     
+    # def stop_button(self):
+    #     print("[TRYING TO STOP]")
+    #     self.play_button_var=0
 
+
+    # def check_play_var(self):
+    #     print("checing")
+    #     if self.play_button_var==1:
+    #         print('checked and true')
+    #         return True
+    #     else:
+    #         return False
+
+    # def play_button(self):
+    #     self.play_button_var=1
+    #     while self.check_play_var():
+    #         self.next_img()
+    #     print("[Stopped]")
 
 
     def next_img(self):
-        
-        
-
         print("-----------NEXT---------------")
         print("[USER] YOU CLICKED NEXT")
         print("[INFO] Moving to : ", self.img_index_front_images)
@@ -250,31 +270,30 @@ class PageTwo(tk.Frame):
 
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         
-        self.draw_bounding_for_marked(self.img_index_front_images,self.img_index_front_images+self.frame_rate)
-        self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
-        self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
+        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
-        self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
+        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
+        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
-        self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
+        self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
         
-        self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2)
+        self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
         self.img_label_2.config(image=self.img_label_2.img)
         
-        self.img_label_3.img = ImageTk.PhotoImage(self.image_resized_3)
+        self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
         self.img_label_3.config(image=self.img_label_3.img)
 
-        print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
-        print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate)))        
-        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
-        print("-------------------------------")
+        # print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
+        # print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate))        
+        # print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        # print("-------------------------------")
 
-        #self.current_instance=[]
+        self.current_instance=[]
         self.initialize_dd()
         self.previous_index=self.img_index_front_images
         self.img_index_front_images=1+self.img_index_front_images
@@ -282,8 +301,13 @@ class PageTwo(tk.Frame):
         print("[Play button status] {}".format(self.play_button_var))
         if self.play_button_var==1:
             self.after(400,self.next_img)
+        
+
+# shishodia.aman@gmail.com
+# +1 4703094627
 
     def prev_img(self):
+
 
         print("----------------PREV----------")
         print("[USER] YOU CLICKED PREVIOUS")
@@ -301,27 +325,26 @@ class PageTwo(tk.Frame):
         self.image_name_right=self.right_image_list[self.previous_index]
 
         
-        self.draw_bounding_for_marked(self.previous_index,self.previous_index+self.frame_rate)
 
         
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         
-        print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
-        print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate)))  
-        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        # print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
+        # print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate))  
+        # print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
 
-        self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
-        self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
+        image_resized=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
+        image_resized_2=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
+        image_resized_3=image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
 
-        self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
+        self.img_label_1.img = ImageTk.PhotoImage(image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
-        self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2)
+        self.img_label_2.img = ImageTk.PhotoImage(image_resized_2)
         self.img_label_2.config(image=self.img_label_2.img)
-        self.img_label_3.img = ImageTk.PhotoImage(self.image_resized_3)
+        self.img_label_3.img = ImageTk.PhotoImage(image_resized_3)
         self.img_label_3.config(image=self.img_label_3.img)
         self.img_index_front_images=self.previous_index+1
         self.img_index_right_images=self.previous_index+1
@@ -341,15 +364,14 @@ class PageTwo(tk.Frame):
 
     #first click on image 1
     def clicked(self,event):
-        self.current_instance=[]
-        self.initial_click=(event.x,event.y)
+        initial_click=(event.x,event.y)
         print("-------------CREATING NEW BOUNDING BOX INSTANCE---------------")
         print("You Have found a new sign in the images indicies {} {}".format(self.previous_index,self.previous_index+1))
-        print("Creating new sign id for this sign {}".format(self.sign_id_gen(self.previous_index,self.previous_index+1)))
+        print("Creating new sign id for this sign")
         
         self.current_instance.append(self.sign_id_gen(self.previous_index,self.previous_index+1))
 
-        print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(self.initial_click[0],self.initial_click[1]))
+        print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(initial_click[0],initial_click[1]))
         #appending image_name_from_panel_1
         print("[INFO] Appending image index {} {}".format(self.previous_index,self.previous_index+1))
         self.current_instance.append(self.previous_index)
@@ -357,40 +379,36 @@ class PageTwo(tk.Frame):
         self.current_instance.append(self.image_name_front)
         self.current_instance.append(self.next_image_front)
         print("[INFO] Appending top left corner of the image to the current instance")
-        self.current_instance.append(self.initial_click)
+        self.current_instance.append(initial_click)
         
     #release event on image 2
     def release(self,event):
-        self.release_point=(event.x,event.y)
-        print("[INFO] Releasing mouse at {} {}".format(self.release_point[0],self.release_point[1]))
+        release_point=(event.x,event.y)
+        print("[INFO] Releasing mouse at {} {}".format(release_point[0],release_point[1]))
         print("[INFO] Appending release point into current instance")
-        self.current_instance.append(self.release_point)
-        draw=ImageDraw.Draw(self.image_resized)
-        draw.rectangle(((self.initial_click),(self.release_point)),outline='red')
-        self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
-        self.img_label_1.config(image=self.img_label_1.img)
+        self.current_instance.append(release_point)
+
         print("[INFO] Bounding Boxes drawn on box-1 Now proceed to draw bouding boxes on box two")
         
     #double_click event for second image
     def clicked_i2(self,event):
-        self.initial_click_i2=(event.x,event.y)
-        print("[INFO] Top-Left Corner of slected image 2 in resized image {} {}".format(self.initial_click_i2[0],self.initial_click_i2[1]))
+        initial_click_i2=(event.x,event.y)
+        print("[INFO] Top-Left Corner of slected image 2 in resized image {} {}".format(initial_click_i2[0],initial_click_i2[1]))
         #appending image_name_from_panel_1
         print("[INFO] Appending top left corner of the image 2 to the current instance")
-        self.current_instance.append(self.initial_click_i2)
+        self.current_instance.append(initial_click_i2)
     
     #double_click_release
     def release_i2(self,event):
        
 
-        self.release_point_i2=(event.x,event.y)
-        print("[INFO] Releasing mouse at 2 {} {}".format(self.release_point_i2[0],self.release_point_i2[1]))
+        release_point_i2=(event.x,event.y)
+        print("[INFO] Releasing mouse at 2 {} {}".format(release_point_i2[0],release_point_i2[1]))
         print("[INFO] Appending release point into current instance")
-        draw=ImageDraw.Draw(self.image_resized_2)
-        draw.rectangle(((self.initial_click_i2),(self.release_point_i2)),outline='red')
-        self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2)
-        self.img_label_2.config(image=self.img_label_2.img)        
-        self.current_instance.append(self.release_point_i2)
+        
+
+
+        self.current_instance.append(release_point_i2)
         print("[INFO] Bounding Boxes drawn on box-2")
         print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
         self.all_data.append(self.current_instance)
@@ -400,21 +418,16 @@ class PageTwo(tk.Frame):
 
     def clear_current_instance(self):
         print("[INFO] Removing all the bounding boxes in these two images")
-        sign_id=self.sign_id_gen(self.previous_index,self.previous_index+1)
-        print(sign_id)
-        for i in self.all_data:
-            if i[0]==sign_id:
-                print(i[0])
-                self.all_data.remove(i)
         print(self.all_data)
-    def draw_bounding_for_marked(self,id_1,id_2):
-        sign_id=self.sign_id_gen(id_1,id_2)
-        print(sign_id)
-        for i in self.all_data:
-            if i[0]==sign_id:
-                print(i[0])
-
-
+        print(self.img_index_front_images-1,self.img_index_front_images)
+        sign_id_to_clear=self.sign_id_gen(self.img_index_front_images-1,self.img_index_front_images)
+        print("[INFO] Clearning bounding boxes and data corresponding to sign_id {}".format(sign_id_to_clear))
+        for i in range (0,len(self.all_data)):
+             if self.all_data[i][0]==sign_id_to_clear:
+                 del self.all_data[i] 
+        print(self.all_data)
+       
+    
     def get_directories(self):
         return filedialog.askdirectory()
     
