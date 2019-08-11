@@ -118,6 +118,8 @@ class PageTwo(tk.Frame):
         self.previous_index=0
         
         self.play_button_var=0
+        #self.jump_distance=0
+
 
         #images frame
         self.farme_for_images=tk.Frame(self,relief='solid', bg='gray30')
@@ -155,6 +157,7 @@ class PageTwo(tk.Frame):
         self.initial_click_i2=(0,0)
         self.release_point_i2=(0,0)
 
+        self.go_to=0
 
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=0)
         
@@ -186,7 +189,16 @@ class PageTwo(tk.Frame):
         ovr_dd = OptionMenu(self.farme_for_np, self.ovr_type_var,
                             *OVERHEAD_TYPE, command=lambda *args: self.set_values('overhead_type'))
         ovr_dd.pack(side='left', padx='5', pady='10')
+
+        #entry
+        self.go_to_number=Entry(self.farme_for_np)
+        self.go_to_number.pack(side='left',padx='5',pady='5')
+
+        self.jump_btn=tk.Button(self.farme_for_np,text='Jump to here',command=self.jump_image)
+        self.jump_btn.pack(side='left',padx='5',pady='5')
+
         
+
         
 
         self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_np,text='Remove current bbox',command=self.clear_current_instance)
@@ -245,11 +257,9 @@ class PageTwo(tk.Frame):
 
 
     def next_img(self):
-        
-        
-
         print("-----------NEXT---------------")
         print("[USER] YOU CLICKED NEXT")
+
         print("[INFO] Moving to : ", self.img_index_front_images)
         #print("[INFO] Starting to play the images automatically!")
         
@@ -293,6 +303,52 @@ class PageTwo(tk.Frame):
         print("[Play button status] {}".format(self.play_button_var))
         if self.play_button_var==1:
             self.after(300,self.next_img)
+
+    def jump_image(self):
+        print("-----------NEXT---------------")
+        self.go_to=self.go_to_number.get()
+        print("[USER] YOU CHOOSE TO JUMP to {}".format(self.go_to))
+        self.img_index_front_images=int(self.go_to)
+        print("[INFO] Moving to : ", self.img_index_front_images)
+        #print("[INFO] Starting to play the images automatically!")
+        
+        self.image_name_front=self.front_image_list[self.img_index_front_images]
+        self.next_image_front=self.front_image_list[self.img_index_front_images+self.frame_rate]
+        self.image_name_right=self.right_image_list[self.img_index_right_images]
+
+        self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        
+       
+        self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
+        self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
+        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
+        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        
+        self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
+        self.img_label_1.config(image=self.img_label_1.img)
+        
+        self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2)
+        self.img_label_2.config(image=self.img_label_2.img)
+        
+        self.img_label_3.img = ImageTk.PhotoImage(self.image_resized_3)
+        self.img_label_3.config(image=self.img_label_3.img)
+
+        self.draw_bounding_for_marked(self.img_index_front_images,self.img_index_front_images+self.frame_rate)
+
+        print("[INFO] Dealing with indices {} {}".format(self.img_index_front_images,self.img_index_front_images+self.frame_rate))
+        print("[INFO] Dealing with unique id: {}".format(self.sign_id_gen(self.img_index_front_images,self.img_index_front_images+self.frame_rate)))        
+        print("[INFO] Images {} {} {} being shown".format(self.image_name_front,self.next_image_front,self.image_name_right))
+        print("-------------------------------")
+
+        #self.current_instance=[]
+        self.initialize_dd()
+        self.previous_index=self.img_index_front_images
+        self.img_index_front_images=1+self.img_index_front_images
+        self.img_index_right_images=1+self.img_index_right_images
 
     def prev_img(self):
 
