@@ -132,8 +132,6 @@ class PageTwo(tk.Frame):
         self.img_label_3.pack(side='left')
         
         
-        self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_images,text='Remove current bbox',command=self.clear_current_instance)
-        self.btn_for_removal_of_bounding_box.pack(side='left', padx='5', pady='10')
         
         self.img_label_1.bind("<Button-1>",self.clicked)
         self.img_label_1.bind("<ButtonRelease-1>",self.release)
@@ -156,20 +154,9 @@ class PageTwo(tk.Frame):
         self.release_point=(0,0)
         self.initial_click_i2=(0,0)
         self.release_point_i2=(0,0)
-                
-        phys_cond_dd = OptionMenu(self.farme_for_images, self.phys_cond_var, *PHYSICAL_CONDITION,
-                                    command=lambda *args: self.set_values('physical_condition'))
-        phys_cond_dd.pack(side='left', padx='5', pady='10')
 
-        mutcd_dd = OptionMenu(self.farme_for_images, self.mutcd_code_var, *MUTCD_CODES,
-                                command=lambda *args: self.set_values('mutcd_code'))
-        mutcd_dd.pack(side='left', padx='5', pady='10')
 
-        ovr_dd = OptionMenu(self.farme_for_images, self.ovr_type_var,
-                            *OVERHEAD_TYPE, command=lambda *args: self.set_values('overhead_type'))
-        ovr_dd.pack(side='left', padx='5', pady='10')
-
-        self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=1)
+        self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=0)
         
 
         self.farme_for_np=tk.Frame(self,relief='solid', bg='gray90')
@@ -187,9 +174,26 @@ class PageTwo(tk.Frame):
         self.btn_prev = tk.Button(self.farme_for_np, text='Previous image', command=  self.prev_img)
         self.btn_prev.pack(side='left', padx='5', pady='10')
         
+                        
+        phys_cond_dd = OptionMenu(self.farme_for_np, self.phys_cond_var, *PHYSICAL_CONDITION,
+                                    command=lambda *args: self.set_values('physical_condition'))
+        phys_cond_dd.pack(side='left', padx='5', pady='10')
+
+        mutcd_dd = OptionMenu(self.farme_for_np, self.mutcd_code_var, *MUTCD_CODES,
+                                command=lambda *args: self.set_values('mutcd_code'))
+        mutcd_dd.pack(side='left', padx='5', pady='10')
+
+        ovr_dd = OptionMenu(self.farme_for_np, self.ovr_type_var,
+                            *OVERHEAD_TYPE, command=lambda *args: self.set_values('overhead_type'))
+        ovr_dd.pack(side='left', padx='5', pady='10')
         
+        
+
+        self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_np,text='Remove current bbox',command=self.clear_current_instance)
+        self.btn_for_removal_of_bounding_box.pack(side='left', padx='5', pady='10')
+
     
-        self.farme_for_np.pack(side="bottom",anchor='w', padx="10", pady="10", fill='both', expand=1)
+        self.farme_for_np.pack(side="bottom",anchor='w', padx="10", pady="10", fill='both', expand=0)
 
         #image frame ends
     def play_button(self):
