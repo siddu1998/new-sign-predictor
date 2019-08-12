@@ -89,6 +89,10 @@ class PageTwo(tk.Frame):
 
         self.width_of_panel=600
         self.height_of_panel=600
+
+        self.scale_x=2448/600
+        self.scale_y=2048/600
+
         self.title_text = StringVar()
         self.bug_variable=0
         self.frame_rate=1
@@ -197,9 +201,8 @@ class PageTwo(tk.Frame):
         self.jump_btn=tk.Button(self.farme_for_np,text='Jump to here',command=self.jump_image)
         self.jump_btn.pack(side='left',padx='5',pady='5')
 
-        
-
-        
+        self.save_all_data=tk.Button(self.farme_for_np,text='Save sheet so far',command=self.save_sheet)
+        self.save_all_data.pack(side='left',padx='5',pady='5')
 
         self.btn_for_removal_of_bounding_box=tk.Button(self.farme_for_np,text='Remove current bbox',command=self.clear_current_instance)
         self.btn_for_removal_of_bounding_box.pack(side='left', padx='5', pady='10')
@@ -208,6 +211,10 @@ class PageTwo(tk.Frame):
         self.farme_for_np.pack(side="bottom",anchor='w', padx="10", pady="10", fill='both', expand=0)
 
         #image frame ends
+    def save_sheet(self):
+        dfObj = pd.DataFrame(self.all_data)
+        dfObj.to_csv('new_signs.csv',index=False) 
+
     def play_button(self):
         
         if self.play_button_var==1:
@@ -245,7 +252,7 @@ class PageTwo(tk.Frame):
         print("---------------------------------------------------------------")
 
         
-        
+    #def scale cordinates   
   
     def initialize_dd(self):        
         self.retro_cond_var.set("None")
@@ -425,7 +432,8 @@ class PageTwo(tk.Frame):
         self.current_instance.append(self.image_name_front)
         self.current_instance.append(self.next_image_front)
         print("[INFO] Appending top left corner of the image to the current instance")
-        self.current_instance.append(self.initial_click)
+        initial_click_scaled=(int(self.scale_x*event.x),int(self.scale_y*event.y))
+        self.current_instance.append(initial_click_scaled)
         
     #release event on image 2
     def release(self,event):
