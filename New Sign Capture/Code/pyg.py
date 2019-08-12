@@ -162,22 +162,25 @@ class PageTwo(tk.Frame):
         self.release_point_i2=(0,0)
 
         self.go_to=0
+        self.sign_id=0
 
         self.farme_for_images.pack(side="top", padx="10", pady="10", fill='both', expand=0)
         
 
         self.farme_for_np=tk.Frame(self,relief='solid', bg='gray90')
+        if len(self.front_image_list)==len(self.right_image_list):
+            self.btn = tk.Button(self.farme_for_np, text='Next image',command=self.next_img)
+            self.btn.pack(side='left', padx='5', pady='10')
 
-        self.btn = tk.Button(self.farme_for_np, text='Next image',command=self.next_img)
-        self.btn.pack(side='left', padx='5', pady='10')
+            self.btn_play = tk.Button(self.farme_for_np, text='Play',command=self.play_button)
+            self.btn_play.pack(side='left', padx='5', pady='10')
 
-    
-
-
-        self.btn_play = tk.Button(self.farme_for_np, text='Play',command=self.play_button)
-        self.btn_play.pack(side='left', padx='5', pady='10')
-        # self.btn_stop = tk.Button(self.farme_for_np, text='Stop',command=self.stop_button)
+            # self.btn_stop = tk.Button(self.farme_for_np, text='Stop',command=self.stop_button)
         # self.btn_stop.pack(side='left', padx='5', pady='10')
+        else:
+            print("[WARNING] Images from front and left not in sync")
+            self.title_text.set("[WARNING] Images from front and left not in sync")
+        
         self.btn_prev = tk.Button(self.farme_for_np, text='Previous image', command=  self.prev_img)
         self.btn_prev.pack(side='left', padx='5', pady='10')
         
@@ -234,19 +237,19 @@ class PageTwo(tk.Frame):
         if type == 'physical_condition':
             label = self.phys_cond_var.get()
             print("[USER] {} selected".format(label))
-            self.current_instance.append(label)
+            self.current_instance[9]=label
 
         # elif type == 'retro_condition':
             # label = self.retro_cond_var.get()
         elif type == 'mutcd_code':
             label_2 = self.mutcd_code_var.get()
             print("[USER] {} selected".format(label_2))
-            self.current_instance.append(label_2)
+            self.current_instance[10]=label_2
 
         elif type == 'overhead_type':
             label_3 = self.ovr_type_var.get()
             print("[USER] {} selected".format(label_3))
-            self.current_instance.append(label_3)
+            self.current_instance[11]=label_3
         print("[INFO] Printing inventory till now {}".format(self.all_data))
         print("[INFO] All Data captured! Move to next image")
         print("---------------------------------------------------------------")
@@ -281,10 +284,10 @@ class PageTwo(tk.Frame):
         self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
         self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_resized_2=self.image_2.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_3=Image.open(self.img_path_for_right+'/'+self.image_name_right)
+        self.image_resized_3=self.image_3.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
         self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
@@ -309,7 +312,7 @@ class PageTwo(tk.Frame):
         self.img_index_right_images=1+self.img_index_right_images
         print("[Play button status] {}".format(self.play_button_var))
         if self.play_button_var==1:
-            self.after(300,self.next_img)
+            self.after(100,self.next_img)
 
     def jump_image(self):
         print("-----------NEXT---------------")
@@ -330,10 +333,10 @@ class PageTwo(tk.Frame):
         self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
         self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_resized_2=self.image_2.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_3=Image.open(self.img_path_for_right+'/'+self.image_name_right)
+        self.image_resized_3=self.image_3.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         
         self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
@@ -386,9 +389,9 @@ class PageTwo(tk.Frame):
         self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
         self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_resized_2=self.image_2.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_3=Image.open(self.img_path_for_right+'/'+self.image_name_right)
+        self.image_resized_3=self.image_3.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
 
         self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
@@ -416,32 +419,42 @@ class PageTwo(tk.Frame):
 
     #first click on image 1
     def clicked(self,event):
-        self.current_instance=[]
+        self.current_instance=[
+        None,None,None,None,
+        None,None,None,None,
+        None,None,None,None,
+        None,None,None,None,
+        None,None,None,None
+        ]
+        
         self.initial_click=(event.x,event.y)
+        self.current_instance[12]=self.initial_click
         print("-------------CREATING NEW BOUNDING BOX INSTANCE---------------")
         print("You Have found a new sign in the images indicies {} {}".format(self.previous_index,self.previous_index+1))
         print("Creating new sign id for this sign {}".format(self.sign_id_gen(self.previous_index,self.previous_index+1)))
         
-        self.current_instance.append(self.sign_id_gen(self.previous_index,self.previous_index+1))
+        self.current_instance[0]=self.sign_id_gen(self.previous_index,self.previous_index+1)
 
         print("[INFO] Top-Left Corner of slected image in resized image {} {}".format(self.initial_click[0],self.initial_click[1]))
         #appending image_name_from_panel_1
         print("[INFO] Appending image index {} {}".format(self.previous_index,self.previous_index+1))
-        self.current_instance.append(self.previous_index)
-        self.current_instance.append(self.previous_index+1)
-        self.current_instance.append(self.image_name_front)
-        self.current_instance.append(self.next_image_front)
+        self.current_instance[1]=self.previous_index
+        self.current_instance[2]=self.previous_index+1
+        self.current_instance[3]=self.image_name_front
+        self.current_instance[4]=self.next_image_front
         print("[INFO] Appending top left corner of the image to the current instance")
         initial_click_scaled=(int(self.scale_x*event.x),int(self.scale_y*event.y))
-        self.current_instance.append(initial_click_scaled)
+        self.current_instance[5]=(initial_click_scaled)
+        
         
     #release event on image 2
     def release(self,event):
         self.release_point=(event.x,event.y)
         print("[INFO] Releasing mouse at {} {}".format(self.release_point[0],self.release_point[1]))
         print("[INFO] Appending release point into current instance")
-        self.current_instance.append(self.release_point)
-        
+        release_point_scaled=(int(self.scale_x*event.x),int(self.scale_y*event.y))
+        self.current_instance[6]=release_point_scaled
+        self.current_instance[13]=self.release_point
         self.image_resized_copy=self.image_resized
 
         draw=ImageDraw.Draw(self.image_resized_copy)
@@ -460,12 +473,14 @@ class PageTwo(tk.Frame):
         print("[INFO] Top-Left Corner of slected image 2 in resized image {} {}".format(self.initial_click_i2[0],self.initial_click_i2[1]))
         #appending image_name_from_panel_1
         print("[INFO] Appending top left corner of the image 2 to the current instance")
-        self.current_instance.append(self.initial_click_i2)
-    
+        initial_click_scaled=(int(self.scale_x*event.x),int(self.scale_y*event.y))
+        self.current_instance[7]=initial_click_scaled
+        self.current_instance[14]=self.initial_click_i2
     #double_click_release
     def release_i2(self,event):
     
         self.release_point_i2=(event.x,event.y)
+        release_point_scaled=(int(self.scale_x*event.x),int(self.scale_y*event.y))
         print("[INFO] Releasing mouse at 2 {} {}".format(self.release_point_i2[0],self.release_point_i2[1]))
         print("[INFO] Appending release point into current instance")
         
@@ -477,7 +492,8 @@ class PageTwo(tk.Frame):
         
         self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2_copy)
         self.img_label_2.config(image=self.img_label_2.img)        
-        self.current_instance.append(self.release_point_i2)
+        self.current_instance[8]=(release_point_scaled)
+        self.current_instance[15]=self.release_point_i2
         print("[INFO] Bounding Boxes drawn on box-2")
         print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
         self.all_data.append(self.current_instance)
@@ -492,9 +508,9 @@ class PageTwo(tk.Frame):
         self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
         self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
         self.image_2=Image.open(self.img_path_for_front+'/'+self.next_image_front)
-        self.image_resized_2=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
-        self.image_3=Image.open(self.img_path_for_front+'/'+self.image_name_right)
-        self.image_resized_3=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_resized_2=self.image_2.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
+        self.image_3=Image.open(self.img_path_for_right+'/'+self.image_name_right)
+        self.image_resized_3=self.image_3.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
 
         self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
         self.img_label_1.config(image=self.img_label_1.img)
@@ -522,13 +538,13 @@ class PageTwo(tk.Frame):
                 self.image=Image.open(self.img_path_for_front+'/'+self.image_name_front)
                 self.image_resized=self.image.resize((self.width_of_panel,self.height_of_panel),Image.ANTIALIAS)
                 draw_o=ImageDraw.Draw(self.image_resized)
-                draw_o.rectangle((i[5],i[6]),outline='red')
+                draw_o.rectangle((i[12],i[13]),outline='red')
                 self.img_label_1.img = ImageTk.PhotoImage(self.image_resized)
                 self.img_label_1.config(image=self.img_label_1.img)
                 
                 
                 draw_p=ImageDraw.Draw(self.image_resized_2)
-                draw_p.rectangle((i[7],i[8]),outline='red')
+                draw_p.rectangle((i[14],i[15]),outline='red')
                 
                 self.img_label_2.img = ImageTk.PhotoImage(self.image_resized_2)
                 self.img_label_2.config(image=self.img_label_2.img)        
@@ -547,16 +563,17 @@ class PageTwo(tk.Frame):
             # frames are in the sub-directories
             file_list = []
             for sub_folder in sub_folders:
-                temp_list = (os.listdir(os.path.join(input_image_dir, sub_folder)))
+                print('sin')
+                temp_list = (os.listdir(os.path.join(img_path, sub_folder)))
                 temp_list = [os.path.join(sub_folder, f) for f in temp_list if f.endswith(".jpg")]
                 file_list = file_list + temp_list
                 
             file_list.sort()
-            front_image_list = file_list
+            image_list = file_list
         else:
             # frames are in the folder
             image_list = sub_folders
-
+        print(len(image_list))
         return image_list
 
 
