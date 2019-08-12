@@ -312,7 +312,7 @@ class PageTwo(tk.Frame):
         self.img_index_right_images=1+self.img_index_right_images
         print("[Play button status] {}".format(self.play_button_var))
         if self.play_button_var==1:
-            self.after(100,self.next_img)
+            self.after(10,self.next_img)
 
     def jump_image(self):
         print("-----------NEXT---------------")
