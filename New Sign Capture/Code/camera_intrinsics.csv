@@ -1,0 +1,4 @@
+parameter,value,description
+f,1203.032354,camera focal length (in pixels)
+pixel_size,1,pixel size of the sensor (in pixels)
+d,5,distance between consecutive camera positions (in meters)

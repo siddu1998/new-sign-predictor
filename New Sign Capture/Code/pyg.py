@@ -18,6 +18,10 @@ from PIL import ImageTk, Image,ImageDraw
 import statistics
 from constants import *
 import time
+from mathematics import *
+from scipy.spatial import distance
+from pyproj import Proj, transform, Geod
+from math import atan2, cos, sin
 
 
 #font size
@@ -85,7 +89,10 @@ class PageTwo(tk.Frame):
         tk.Frame.__init__(self,parent)
  
 
- 
+        self.image_width=2488
+        self.image_height=2048
+        self.image_center_x=1244
+        self.image_center_y=1024
 
         self.width_of_panel=600
         self.height_of_panel=600
@@ -96,6 +103,10 @@ class PageTwo(tk.Frame):
         self.title_text = StringVar()
         self.bug_variable=0
         self.frame_rate=1
+
+        self.proj_wgs = Proj(init='EPSG:4326')  # WGS84 coordinate system http://spatialreference.org/ref/epsg/wgs-84/
+        self.proj_ga = Proj(init='EPSG:26916') # UTM zone 16N, which contains Atlanta http://www.spatialreference.org/ref/epsg/26916/
+
         print("Please select the image directories") 
         self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',activebackground='gray20')
         self.title.pack(side='top')
@@ -103,8 +114,12 @@ class PageTwo(tk.Frame):
         print(self.img_path_for_front)
         self.img_path_for_right  = self.get_directories()
         print(self.img_path_for_right)
+
+        self.coords_file = self.get_directories()
+        self.coords_df   = pd.read_csv(self.coords_file)
+
         self.img_index_front_images=0
-        self.img_index_right_images=0
+        #self.img_index_right_images=0
         self.front_image_list=[]
         self.right_image_list=[]
         self.image_name_front=None
@@ -264,6 +279,43 @@ class PageTwo(tk.Frame):
         self.ovr_type_var.set("None")
     
 
+    def get_gps(self):
+        top_left_1_x=self.initial_click[0]
+        top_left_1_y=self.initial_click[1]
+        
+        bottom_right_1_x=self.release_point[0]
+        bottom_right_1_y=self.release_point[1]
+        
+        
+        top_left_2_x=self.initial_click_i2[0]
+        top_left_2_y=self.initial_click_i2[1]
+
+        bottom_right_2_x=self.release_point_i2[0]
+        bottom_right_2_y=self.release_point_i2[1]
+
+        location_center_sign_x_1=int((top_left_1_x+bottom_right_1_x)/2)
+        location_center_sign_y_1=int((top_left_1_y+bottom_right_1_y)/2)
+
+        location_center_sign_x_2=int((top_left_2_x+bottom_right_2_x)/2)
+        location_center_sign_y_2=int((top_left_2_y+bottom_right_2_y)/2)
+
+        x1 = location_center_sign_x_1-self.image_center_x
+        x2=  location_center_sign_x_2-self.image_center_x
+
+        distance_between_two_frames=5
+        if(x2-x1)!=0:
+            l =  dst * x1/(x2-x1) 
+            w = l * (x2)/f 
+        elif (x2-x1)==0:
+            l=dst * x1
+            w=l*(x2)/f
+        
+        lat1=camera_cordinates_image_1[2]
+        lat2=camera_cordiantes_image_2[2]
+        lon1=camera_cordinates_image_1[3]
+        lon2=camera_cordiantes_image_2[3]
+
+        
 
 
     def next_img(self):
@@ -275,7 +327,7 @@ class PageTwo(tk.Frame):
         
         self.image_name_front=self.front_image_list[self.img_index_front_images]
         self.next_image_front=self.front_image_list[self.img_index_front_images+self.frame_rate]
-        self.image_name_right=self.right_image_list[self.img_index_right_images]
+        self.image_name_right=self.right_image_list[self.img_index_front_images]
 
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         
@@ -309,10 +361,10 @@ class PageTwo(tk.Frame):
         self.initialize_dd()
         self.previous_index=self.img_index_front_images
         self.img_index_front_images=1+self.img_index_front_images
-        self.img_index_right_images=1+self.img_index_right_images
+        #self.img_index_right_images=1+self.img_index_right_images
         print("[Play button status] {}".format(self.play_button_var))
         if self.play_button_var==1:
-            self.after(10,self.next_img)
+            self.after(1,self.next_img)
 
     def jump_image(self):
         print("-----------NEXT---------------")
@@ -324,7 +376,7 @@ class PageTwo(tk.Frame):
         
         self.image_name_front=self.front_image_list[self.img_index_front_images]
         self.next_image_front=self.front_image_list[self.img_index_front_images+self.frame_rate]
-        self.image_name_right=self.right_image_list[self.img_index_right_images]
+        self.image_name_right=self.right_image_list[self.img_index_front_images]
 
         self.title_text.set("n-front{} n+1 front {} n-right {}".format(self.image_name_front,self.next_image_front,self.image_name_right))
         
@@ -358,7 +410,7 @@ class PageTwo(tk.Frame):
         self.initialize_dd()
         self.previous_index=self.img_index_front_images
         self.img_index_front_images=1+self.img_index_front_images
-        self.img_index_right_images=1+self.img_index_right_images
+        #self.img_index_right_images=1+self.img_index_right_images
 
     def prev_img(self):
 
@@ -368,7 +420,7 @@ class PageTwo(tk.Frame):
 
         self.previous_index=self.previous_index-1
         self.img_index_front_images=self.previous_index
-        self.img_index_right_images=self.previous_index
+        #self.img_index_right_images=self.previous_index
         print("[INFO] Moving to:",self.previous_index)
 
 
@@ -402,7 +454,7 @@ class PageTwo(tk.Frame):
         print("BOUNDING ID")
         self.draw_bounding_for_marked(self.previous_index,self.previous_index+self.frame_rate)
         self.img_index_front_images=self.previous_index+1
-        self.img_index_right_images=self.previous_index+1
+        #self.img_index_right_images=self.previous_index+1
 
 
 

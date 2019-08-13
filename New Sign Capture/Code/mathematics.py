@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## Solution Template for 2 point Distance Calculations
-# #### Dr. Yi-Chang (James) Tsai 
-# 
-# The below code template would stand valid for calculating distances of signs taken from two consecutive images. The input parameters for the whole code template would be, the camera parameters, the image cordinates of the sign in the image, the UTM and GPS cordinates of the camera. 
-# 
-# You are required to calculate the global position of the sign, from the above parameters. Please feel free to add your own suggestions and changes for better performance and more accurate predictions.
-
-# In[95]:
-
-
 import math
 import cv2
 import matplotlib.pyplot as plt
@@ -20,8 +7,6 @@ from scipy.spatial import distance
 from pyproj import Proj, transform, Geod
 from math import atan2, cos, sin
 
-
-# In[96]:
 
 
 def get_distance_between_two_consecutive_images(cordinate_1,cordinate_2):
@@ -36,37 +21,6 @@ def get_distance_between_two_consecutive_images(cordinate_1,cordinate_2):
     """
     return distance.euclidean(cordinate_1,cordinate_2)
 
-
-# In[97]:
-
-
-def draw_boxes_and_points(image,sign_cordinates):
-    """
-    #TODO (optional) : develop a function which takes the sign_cordinates and the image frame and draws the 
-    bounding boxes around the sign. This function is visulaization purposes, feel free to skip the funciton if 
-    time is a constraint. We suggest you to finish this function to make sure, you have an idea of the loaction
-    you are calculating the distance.
-    :param image: the image frame in which you would like to draw the bounding boxes
-    :param sign_cordinates: A list containing the sign details extracted from the json (converted to csv) file.
-    :return: the frame with the points (four corners marked) and a list of the points itself
-    """
-    #tl
-    cv2.circle(image,(sign_cordinates[0],sign_cordinates[1]),3,(255,255,255),-1)
-    #tr
-    cv2.circle(image,(sign_cordinates[0]+sign_cordinates[2],sign_cordinates[1]),3,(0,0,0),-1)
-    #br
-    cv2.circle(image,(sign_cordinates[0]+sign_cordinates[2],sign_cordinates[1]+sign_cordinates[3]),3,(0,0,255),-1)
-    #bl
-    cv2.circle(image,(sign_cordinates[0],sign_cordinates[1]+sign_cordinates[3]),3,(255,0,0),-1)
-    cv2.imwrite("frame_with_bounding_boxes_plotted.jpg",image)
-    points=[(sign_cordinates[0],sign_cordinates[1]),
-            (sign_cordinates[0]+sign_cordinates[2],sign_cordinates[1]),
-            (sign_cordinates[0]+sign_cordinates[2],sign_cordinates[1]+sign_cordinates[3]),
-            (sign_cordinates[0],sign_cordinates[1]+sign_cordinates[3])]
-    return image,points
-
-
-# In[98]:
 
 
 def clear_distortions(img_before_distance):
@@ -105,29 +59,6 @@ def clear_distortions(img_before_distance):
     return undistorted_image
 
 
-# In[99]:
-
-
-def parsing_annotations(highway_sign_annotations,image_file_name):
-    """
-    TODO: From the sign annotactions please extract and return the values per image, this includes top_x, top_y, 
-    width and height of the image along with the class of the sign present in the image. TIP: you can use pandas to 
-    read the csv file. Develop a function to get the concerned data from the csv file. 
-    :param highway_sign_annotaions: Get the annotaion file of the sign (.csv)
-    :param image_file_name: name of the image whose data we need to get from the csv file
-    :return: A list containing the data concerned with the input image taken from the input annotaions
-    """
-    highway_signs = pd.read_csv(highway_sign_annotations)
-    for index,row in highway_signs.iterrows():
-        if row['frame_name']== image_file_name:
-            sign_top_left_x=row['top_x']
-            sign_top_left_y=row['top_y']
-            sign_width=row['width']
-            sign_height=row['height']
-            class_of_sign=['class']
-
-    return [sign_top_left_x,sign_top_left_y,sign_width,sign_height,class_of_sign]
-
 
 def find_center_of_sign(sign_details_list):
     """
@@ -144,7 +75,6 @@ def find_center_of_sign(sign_details_list):
     return location_sign
 
 
-# In[100]:
 
 
 def distance_two_points_along_x(A,B):
@@ -159,7 +89,6 @@ def distance_two_points_along_y(A,B):
     return A[1]-B[1]
 
 
-# In[101]:
 
 
 
@@ -189,32 +118,8 @@ def trignometric_calculations(x1,x2,f,camera_cordinates_1,camera_cordinates_2):
     
 
 
-# In[106]:
 
 
-
-def parsing_camrea_annotations(image,camera_annotations):
-    """
-    #TODO: Develop a function which reads the camera annocatios (.csv) and returns the data corresponding to the
-    image. 
-    :param image: The name of the image you are searching data for
-    :param camera_annotations: the name of the file where the data of the corresponding image is present
-    :return: A list of the format [camera_cordinates_x,camera_cordinates_y,camera_cordinates_lat,camera_cordinates_lon]
-    
-    """
-    camera_annotations=pd.read_csv(camera_annotations)
-    
-    for index,row in camera_annotations.iterrows():
-        if row["image_name"]==image:
-            camera_cordinates_x=row['x']
-            camera_cordinates_y=row['y']
-            camera_cordinates_lat=row['lat']
-            camera_cordinates_lon=row['lon']
-            print(camera_cordinates_x,camera_cordinates_y,camera_cordinates_lat,camera_cordinates_lon)
-    return [camera_cordinates_x,camera_cordinates_y,camera_cordinates_lat,camera_cordinates_lon]
-
-
-# In[120]:
 
 
 def camera_to_sign(camera_cordinates_image_1,camera_cordiantes_image_2,distancs_tuple):
@@ -257,70 +162,36 @@ def camera_to_sign(camera_cordinates_image_1,camera_cordiantes_image_2,distancs_
     #return (camera_cordinates[0]+distancs_tuple[1],camera_cordinates[1]-distancs_tuple[0])
 
 
-# In[121]:
 
 
-def calculation_of_distances(image_file_name_before_distance,image_file_name_after_distance,sign_annotations,camera_annotations,f=1203.032354):
-    """
-    TODO: Develop a function to return the final cordinates UTM of the image based on the above functions developed
-    :param image_file_name_before_distance: Name of the image file taken before distance d
-    :param image_file_name_after_distance: Name of the image file taken after covering distance d
-    :param sign_annotations: name of the sign annotaions file
-    :param camera_annotation: name of the camera annotaions file
-    :param f: focal length in pixels default value set to smartphone lenght
-    :return the final positions
-    """
+def get_gps(image_file_name_before_distance,image_file_name_after_distance,sign_center_1,sign_center_2,frame_gps):
     print(image_file_name_before_distance,image_file_name_after_distance)
     img_before_distance = cv2.imread(image_file_name_before_distance)
     img_after_distance  = cv2.imread(image_file_name_after_distance)
     #clear distortions
-    #img_before_distance = clear_distortions(img_before_distance)
-    #img_after_distance  = clear_distortions(img_after_distance)
+    img_before_distance = clear_distortions(img_before_distance)
+    img_after_distance  = clear_distortions(img_after_distance)
     #calculate image center and dimensions
-    image_height,image_width,_=img_before_distance.shape
+    image_height=2448
+    image_width =2048
+
+    #image_height,image_width,_=img_before_distance.shape
     image_center = (int(image_width/2),int(image_height/2))
-    #parse annotations for details
-    sign_before_distance = parsing_annotations(sign_annotations,image_file_name_before_distance)
-    sign_after_distance  = parsing_annotations(sign_annotations,image_file_name_after_distance)
     #if we are dealing with the same image proceed as else inform and kill 
-    if sign_after_distance[4]==sign_before_distance[4]:
-        #Find center of sign
-        center_before_distance = find_center_of_sign(sign_before_distance)
-        center_after_distance  = find_center_of_sign(sign_after_distance)
-        #distance between center and sign
-        x1=distance_two_points_along_x(center_before_distance,image_center)
-        x2=distance_two_points_along_x(center_after_distance,image_center)
-        #getting camera_cordinates_to_calculate distance between images
-        camera_cordinates_image_2=parsing_camrea_annotations(image_file_name_after_distance,camera_annotations)
-        camera_cordinates_image_1=parsing_camrea_annotations(image_file_name_before_distance,camera_annotations)
-        #getting distances from camera
-        distance_tuple=trignometric_calculations(x1,x2,f,camera_cordinates_image_1,camera_cordinates_image_2)
-        #understanding spatial location
-        #right_or_left = finding_relative_location_of_image(center_after_distance,image_width)
-        #adding and subtracting images 
-        final_positions = camera_to_sign(camera_cordinates_image_1,camera_cordinates_image_2,distance_tuple)
-        #error_analysis(final_positions)
-        return final_positions
-    else:
-        print('Sorry, We could not find the same sign on both the images')
-        return (0,0)
+    #Find center of sign
+    #center_before_distance = find_center_of_sign(tr_bbox1,tr_bbox2)
+    #center_after_distance  = find_center_of_sign(sign_after_distance)
+    #distance between center and sign
+    
+    x1=sign_center_1[0]-image_center[0]
+    x2=sign_center_2[0]-image_center[1]
 
-
-# In[122]:
-
-
-#Test Case
-calculation_of_distances('0002876.jpg','0002877.jpg','i75_sign_annotations.csv','i75_camera_cordinates.csv',f=2400)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
+    distance_tuple=trignometric_calculations(x1,x2,f,camera_cordinates_image_1,camera_cordinates_image_2)
+    #understanding spatial location
+    #right_or_left = finding_relative_location_of_image(center_after_distance,image_width)
+    #adding and subtracting images 
+    final_positions = camera_to_sign(camera_cordinates_image_1,camera_cordinates_image_2,distance_tuple)
+    #error_analysis(final_positions)
+    return final_positions
 
 
