@@ -280,18 +280,19 @@ class PageTwo(tk.Frame):
     
 
     def get_gps(self):
-        top_left_1_x=self.initial_click[0]
-        top_left_1_y=self.initial_click[1]
+        f=1203.032
+        top_left_1_x=self.current_instance[5][0]
+        top_left_1_y=self.current_instance[5][1]
         
-        bottom_right_1_x=self.release_point[0]
-        bottom_right_1_y=self.release_point[1]
+        bottom_right_1_x=self.current_instance[6][0]
+        bottom_right_1_y=self.current_instance[6][1]
         
         
-        top_left_2_x=self.initial_click_i2[0]
-        top_left_2_y=self.initial_click_i2[1]
+        top_left_2_x=self.current_instance[7][0]
+        top_left_2_y=self.current_instance[7][1]
 
-        bottom_right_2_x=self.release_point_i2[0]
-        bottom_right_2_y=self.release_point_i2[1]
+        bottom_right_2_x=self.current_instance[8][0]
+        bottom_right_2_y=self.current_instance[8][1]
 
         location_center_sign_x_1=int((top_left_1_x+bottom_right_1_x)/2)
         location_center_sign_y_1=int((top_left_1_y+bottom_right_1_y)/2)
@@ -302,7 +303,7 @@ class PageTwo(tk.Frame):
         x1 = location_center_sign_x_1-self.image_center_x
         x2=  location_center_sign_x_2-self.image_center_x
 
-        distance_between_two_frames=5
+        dst=5
         if(x2-x1)!=0:
             l =  dst * x1/(x2-x1) 
             w = l * (x2)/f 
@@ -571,6 +572,7 @@ class PageTwo(tk.Frame):
         self.current_instance[15]=self.release_point_i2
         print("[INFO] Bounding Boxes drawn on box-2")
         print("[INFO] Appending the current instance {} into global inventory".format(self.current_instance))
+        self.get_gps()
         self.all_data.append(self.current_instance)
 
 
