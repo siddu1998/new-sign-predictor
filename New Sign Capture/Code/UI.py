@@ -22,6 +22,8 @@ from mathematics import *
 from scipy.spatial import distance
 from pyproj import Proj, transform, Geod
 from math import atan2, cos, sin
+from tkinter import filedialog as fd
+
 
 
 #font size
@@ -104,8 +106,6 @@ class PageTwo(tk.Frame):
         self.bug_variable=0
         self.frame_rate=1
 
-        self.proj_wgs = Proj(init='EPSG:4326')  # WGS84 coordinate system http://spatialreference.org/ref/epsg/wgs-84/
-        self.proj_ga = Proj(init='EPSG:26916') # UTM zone 16N, which contains Atlanta http://www.spatialreference.org/ref/epsg/26916/
 
         print("Please select the image directories") 
         self.title = Label(self, textvariable=self.title_text, bg='gray20', fg='white',activebackground='gray20')
@@ -115,7 +115,7 @@ class PageTwo(tk.Frame):
         self.img_path_for_right  = self.get_directories()
         print(self.img_path_for_right)
 
-        self.coords_file = self.get_directories()
+        self.coords_file = fd.askopenfilename()
         self.coords_df   = pd.read_csv(self.coords_file)
 
         self.img_index_front_images=0
@@ -280,7 +280,7 @@ class PageTwo(tk.Frame):
     
 
     def get_gps(self):
-        f=1203.032
+        f=2400
         top_left_1_x=self.current_instance[5][0]
         top_left_1_y=self.current_instance[5][1]
         
@@ -310,33 +310,40 @@ class PageTwo(tk.Frame):
         elif (x2-x1)==0:
             l=dst * x1
             w=l*(x2)/f
-        
+        print(w,l)        
         frame_1 = self.coords_df.loc[self.coords_df['image_name'] == self.img_index_front_images]
         frame_2 = self.coords_df.loc[self.coords_df['image_name'] ==  self.img_index_front_images+1]
 
         print(frame_1)
         print(frame_2)
 
-        lat1 = frame_1['lat']
-        lat2 = frame_2['lat']
-        lon1 = frame_1['long']
-        lon2 = frame_2['long']
-        camera1_x, camera1_y = transform(proj_wgs, proj_ga, lon1, lat1)
-        camera2_x, camera2_y = transform(proj_wgs, proj_ga, lon2, lat2)
-        print(camera1_x,camera1_y)
-        print(camera2_x,camera2_y)
+        proj_wgs = Proj(init='EPSG:4326')  # WGS84 coordinate system http://spatialreference.org/ref/epsg/wgs-84/
+        proj_ga = Proj(init='EPSG:26916') # UTM zone 16N, which contains Atlanta http://www.spatialreference.org/ref/epsg/26916/
+
+        lat1 = float(frame_1['lat'])
+        lon1 = float(frame_1['long'])
+        
+        lat2 = float(frame_2['lat'])
+        lon2 = float(frame_2['long'])
+
+        camera1_x, camera1_y = transform(proj_wgs, proj_ga, lat1,lon1)
+        camera2_x, camera2_y = transform(proj_wgs, proj_ga, lat2,lon2)
+        #print(camera1_x,camera1_y)
+        #print(camera2_x,camera2_y)
 
         angle = atan2(camera2_y - camera1_y, camera2_x - camera1_x)
-        print(angle)
+        #print(angle)
 
         sign_world_coords = np.empty(2)
         sign_world_coords[0] = l * cos(angle) + w * sin(angle) + camera1_x
         sign_world_coords[1] = l * sin(angle) - w * cos(angle) + camera1_y
-        print("UTM sign", sign_world_coords)
+        #print("UTM sign", sign_world_coords)
 
         # Convert the world coordinates of the point to GPS coordinates
         sign_lon, sign_lat = proj_ga(sign_world_coords[0], sign_world_coords[1], inverse=True)
         print(sign_lon,sign_lat)
+        self.current_instance[18]=(float(frame_1['lat']),float(frame_1['long']))
+        self.current_instance[19]=(float(frame_2['lat']),float(frame_2['long']))
         self.current_instance[16]=sign_lon
         self.current_instance[17]=sign_lat
 
