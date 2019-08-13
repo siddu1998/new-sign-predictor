@@ -310,12 +310,35 @@ class PageTwo(tk.Frame):
             l=dst * x1
             w=l*(x2)/f
         
-        lat1=camera_cordinates_image_1[2]
-        lat2=camera_cordiantes_image_2[2]
-        lon1=camera_cordinates_image_1[3]
-        lon2=camera_cordiantes_image_2[3]
+        frame_1 = self.coords_df.loc[self.coords_df['image_name'] == self.img_index_front_images]
+        frame_2 = self.coords_df.loc[self.coords_df['image_name'] ==  self.img_index_front_images+1]
 
-        
+        print(frame_1)
+        print(frame_2)
+
+        lat1 = frame_1['lat']
+        lat2 = frame_2['lat']
+        lon1 = frame_1['long']
+        lon2 = frame_2['long']
+        camera1_x, camera1_y = transform(proj_wgs, proj_ga, lon1, lat1)
+        camera2_x, camera2_y = transform(proj_wgs, proj_ga, lon2, lat2)
+        print(camera1_x,camera1_y)
+        print(camera2_x,camera2_y)
+
+        angle = atan2(camera2_y - camera1_y, camera2_x - camera1_x)
+        print(angle)
+
+        sign_world_coords = np.empty(2)
+        sign_world_coords[0] = l * cos(angle) + w * sin(angle) + camera1_x
+        sign_world_coords[1] = l * sin(angle) - w * cos(angle) + camera1_y
+        print("UTM sign", sign_world_coords)
+
+        # Convert the world coordinates of the point to GPS coordinates
+        sign_lon, sign_lat = proj_ga(sign_world_coords[0], sign_world_coords[1], inverse=True)
+        print(sign_lon,sign_lat)
+        self.current_instance[16]=sign_lon
+        self.current_instance[17]=sign_lat
+
 
 
     def next_img(self):
